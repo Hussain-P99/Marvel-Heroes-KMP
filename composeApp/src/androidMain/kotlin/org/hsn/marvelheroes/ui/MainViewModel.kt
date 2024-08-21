@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.hsn.marvelheroes.data.MarvelRepository
@@ -20,6 +21,8 @@ class MainViewModel(private val marvelRepository: MarvelRepository) : ViewModel(
     init {
 //        getAllCharacters()
     }
+
+    private var searchJob: Job? = null
 
     private val _isRefreshing = MutableLiveData<Boolean>()
     val isRefreshing: LiveData<Boolean> get() = _isRefreshing
@@ -83,7 +86,9 @@ class MainViewModel(private val marvelRepository: MarvelRepository) : ViewModel(
     }
 
     fun searchCharacter(searchText: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        searchJob?.cancel()
+        isLoading.value = true
+        searchJob = viewModelScope.launch(Dispatchers.IO) {
             when(val result = marvelRepository.searchCharacter(searchText)) {
                 is ExecResult.Error -> {
                     withContext(Dispatchers.Main) {
