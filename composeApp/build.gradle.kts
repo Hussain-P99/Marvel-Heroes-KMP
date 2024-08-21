@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -22,6 +21,11 @@ kotlin {
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.androidx.compose)
+            implementation("io.coil-kt:coil-compose:2.7.0")
+            implementation("androidx.compose.runtime:runtime-livedata:$1.1.0-beta01")
+            implementation("com.google.accompanist:accompanist-swiperefresh:0.23.1")
+            implementation("androidx.navigation:navigation-compose:2.5.2")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

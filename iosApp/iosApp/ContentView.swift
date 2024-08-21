@@ -2,6 +2,7 @@ import SwiftUI
 import Shared
 
 struct ContentView: View {
+    var viewModel : ViewModel
     @State private var showContent = false
     var body: some View {
         VStack {
@@ -26,8 +27,29 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+class ViewModel : ObservableObject {
+
+    @Published var characters : NSArray = NSArray()
+    
+    var marvelRepository = KoinHelper().getMarvelRepository()
+    
+    init() {
+        getAllCharacters()
     }
+    
+    func getAllCharacters() {
+        marvelRepository.getAllCharacters(shouldRefresh: false) { execResult, error in
+            if let successResult = execResult as? ExecResultSuccess {
+                print(successResult.data ?? "No Data")
+                if let successData = successResult.data {
+                    self.characters = successData
+                }
+            } else if let errorResult = execResult as? ExecResultError {
+                print(errorResult.message ?? "Unknown Error")
+            } else {
+                print("Loading")
+            }
+        }
+    }
+    
 }
